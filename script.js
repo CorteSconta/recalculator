@@ -1,80 +1,93 @@
-const wholeCalc = document.querySelector('.calculon'); //all calc selected
-const btns = wholeCalc.querySelector(".calculon_btns"); //
-const display = document.querySelector("#calculon_display");
+const operate = (n1, operator, n2) => { // Main logic
+  let tot = ""
 
-btns.addEventListener('click', e => {
+  if (operator === "add") {
+    tot = parseFloat(n1) + parseFloat(n2)
+  } else if (operator === "subtract") {
+    tot = parseFloat(n1) - parseFloat(n2)
+  } else if (operator === "multiply") {
+    tot = parseFloat(n1) * parseFloat(n2)
+  } else if (operator === "divide") {
+    tot = parseFloat(n1) / parseFloat(n2)
+  }    
+  return tot  
+}
+
+const calculator = document.querySelector('.calculon'); 
+const keys = calculator.querySelector(".calculon_btns"); 
+const display = calculator.querySelector(".calculon_display");
+
+keys.addEventListener('click', e => {
   if (e.target.matches("button")) {
-    const btn = e.target; //btn target of the event
-    const action = btn.dataset.action //e.target.classList.contains("opr")
-    const btnsText = btn.textContent // value of the text inside the buttons
-    const currentNum = display.textContent //number on display
-    const previousBtnType = wholeCalc.dataset.previousBtnType
+    const key = e.target;
+    const action = key.dataset.action 
+    const keyContent = key.textContent 
+    const displayedNum = display.textContent 
+    const previouskeyType = calculator.dataset.previouskeyType
 
-    //check if 0 is the only number and if it's not, concat.
+     Array.from(key.parentNode.children)
+      .forEach(b => b.classList.remove("is-depressed"))
+
     if(!action) {
-      if(currentNum === "0" || previousBtnType === "operator") {
-        display.textContent = btnsText;
+      if(displayedNum === "0" || previouskeyType === "operator") {
+        display.textContent = keyContent
       } else {
-        display.textContent = currentNum + btnsText
+        display.textContent = displayedNum + keyContent
       }
-      console.log("number")
+      calculator.dataset.previouskeyType = "number"
+    }
+
+    //DECIMAL
+    if (action === "decimal") {
+      if(!display.textContent.includes(".")) {
+        display.textContent = displayedNum + "."
+      } else if (previouskeyType === "operator") {
+        display.textContent = "0."
+      }
+      
+      calculator.dataset.previouskeyType = "decimal"
     }
 
     if (
-      action === ("add") ||
-      action === ("subtract") ||
-      action === ("divide") ||
-      action === ("multiply")
+      action === "add" ||
+      action === "subtract" ||
+      action === "divide" ||
+      action === "multiply"
     ) {
-      btn.classList.add("is-depressed")
-      wholeCalc.dataset.previousBtnType = "operator"
-      wholeCalc.dataset.firstNum = currentNum
-      wholeCalc.dataset.operator = action
-      console.log("operator")
-    }
+      const firstValue = calculator.dataset.firstValue
+      const operator = calculator.dataset.operator
+      const secondValue = displayedNum
 
-    //Add the "." 
-    if (action === ("decimal")) {
-      display.textContent = currentNum + "."
-      console.log("decimal")
-    }
+      if( // Store the value in dataset
+        firstValue && 
+        operator &&
+        previouskeyType !== "operator"
+      ) {
+        const calcValue = operate(firstValue, operator, secondValue)
+        display.textContent = calcValue
 
-    if (action === ("equal")) {
-      const secondNum = currentNum
-      console.log("equal")
-    }
-
-    if (action === ("clear")) {
-      console.log("clear")
-    }
-
-    //Remove class pressed from children of BTNS (parent node)
-    Array.from(btn.parentNode.children)
-      .forEach(b => b.classList.remove("is-depressed"))
-
-    const operate = (n1, n2, operator) => {
-      let tot = ""
-
-      switch(operator) {
-        case "add":
-          tot = n1 + n2
-          break
-        case "subtract": 
-          tot = n1 - n2
-          break
-        case "multiply": 
-          tot = n1 * n2 
-          break
-        case "divide":
-          tot = n1 / n2
-          break
+        calculator.dataset.firstValue = calcValue
+      } else {
+        calculator.dataset.firstValue = displayedNum
       }
 
-
+      key.classList.add("is-depressed")
+        calculator.dataset.previouskeyType = "operator"
+        calculator.dataset.operator = action // store action into dataset    
     }
 
+    if (action === "clear") { 
+      calculator.dataset.previouskeyType = "clear"
+    }
 
+    if (action === "operate") {
+      const firstValue = calculator.dataset.firstValue
+      const operator = calculator.dataset.operator
+      const secondValue = displayedNum
 
+      display.textContent = operate(firstValue, operator, secondValue)
+      calculator.dataset.previouskeyType = "operate"
+    }
   }
 })
 

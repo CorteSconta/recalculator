@@ -1,4 +1,4 @@
-button {
+ button {
   outline: none;
   border: 0;
   background-color: transparent;
@@ -24,8 +24,3 @@ button {
   opacity: 0.3;
   z-index: 1;
 }
-
-/* .is-depressed {
-  background-color: brown;
-  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.5) inset
-} */
