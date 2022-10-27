@@ -16,11 +16,4 @@
 .calculon_btns > *{
   background-color: #999;}
 
-.calculon_btns > *:active::before,
-.calculon_btns > .is-depressed::before {
-  background-color: red;
-  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.5) inset;
-  content: "";
-  opacity: 0.3;
-  z-index: 1;
-}
+
